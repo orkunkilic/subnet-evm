@@ -38,9 +38,7 @@ import (
 )
 
 const (
-	SetProtectionGasCost uint64 = 20_000
-	StealGasCost         uint64 = 40_000
-	UncertainFateGasCost uint64 = 20_000
+	CallGasCost uint64 = 50_000
 
 	// ContractCallMainnetRawABI contains the raw ABI of CrazyWithPower contract.
 	ContractCallMainnetRawABI = "[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"protection\",\"type\":\"uint256\"}],\"name\":\"setProtection\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"enemy\",\"type\":\"address\"}],\"name\":\"steal\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"uncertainFate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
@@ -155,7 +153,7 @@ func PackCall(address common.Address, data []byte) ([]byte, error) {
 }
 
 func call(accessibleState PrecompileAccessibleState, caller common.Address, addr common.Address, input []byte, suppliedGas uint64, readOnly bool) (ret []byte, remainingGas uint64, err error) {
-	if remainingGas, err = deductGas(suppliedGas, StealGasCost); err != nil {
+	if remainingGas, err = deductGas(suppliedGas, CallGasCost); err != nil {
 		return nil, 0, err
 	}
 	if readOnly {
