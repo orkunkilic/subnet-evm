@@ -13,6 +13,7 @@ import (
 const (
 	writeGasCostPerSlot = 20_000
 	readGasCostPerSlot  = 5_000
+	callMainnetGasCost  = 100_000
 )
 
 // Designated addresses of stateful precompiles
@@ -31,6 +32,7 @@ var (
 	ContractNativeMinterAddress      = common.HexToAddress("0x0200000000000000000000000000000000000001")
 	TxAllowListAddress               = common.HexToAddress("0x0200000000000000000000000000000000000002")
 	FeeConfigManagerAddress          = common.HexToAddress("0x0200000000000000000000000000000000000003")
+	CallMainnetAddress               = common.HexToAddress("0x0300000000000000000000000000000000000000")
 	// ADD YOUR PRECOMPILE HERE
 	// {YourPrecompile}Address       = common.HexToAddress("0x03000000000000000000000000000000000000??")
 
@@ -39,6 +41,7 @@ var (
 		ContractNativeMinterAddress,
 		TxAllowListAddress,
 		FeeConfigManagerAddress,
+		CallMainnetAddress,
 		// ADD YOUR PRECOMPILE HERE
 		// YourPrecompileAddress
 	}

@@ -260,6 +260,9 @@ func (c *ChainConfig) Is{YourPrecompile}(blockTimestamp *big.Int) bool {
 	return config != nil && !config.Disable
 }
 */
+func (c *ChainConfig) IsCallMainnet(blockTimestamp *big.Int) bool {
+	return utils.IsForked(c.ContractCallMainnetConfig.Timestamp(), blockTimestamp)
+}
 
 // CheckCompatible checks whether scheduled fork transitions have been imported
 // with a mismatching chain configuration.
@@ -493,6 +496,7 @@ type Rules struct {
 	IsContractNativeMinterEnabled      bool
 	IsTxAllowListEnabled               bool
 	IsFeeConfigManagerEnabled          bool
+	IsCallMainnetEnabled               bool
 	// ADD YOUR PRECOMPILE HERE
 	// Is{YourPrecompile}Enabled         bool
 
@@ -532,6 +536,7 @@ func (c *ChainConfig) AvalancheRules(blockNum, blockTimestamp *big.Int) Rules {
 	rules.IsContractNativeMinterEnabled = c.IsContractNativeMinter(blockTimestamp)
 	rules.IsTxAllowListEnabled = c.IsTxAllowList(blockTimestamp)
 	rules.IsFeeConfigManagerEnabled = c.IsFeeConfigManager(blockTimestamp)
+	rules.IsCallMainnetEnabled = c.IsCallMainnet(blockTimestamp)
 	// ADD YOUR PRECOMPILE HERE
 	// rules.Is{YourPrecompile}Enabled = c.{IsYourPrecompile}(blockTimestamp)
 

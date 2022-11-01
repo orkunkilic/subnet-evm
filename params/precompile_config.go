@@ -21,12 +21,13 @@ const (
 	contractNativeMinterKey
 	txAllowListKey
 	feeManagerKey
+	contractCallMainnet
 	// ADD YOUR PRECOMPILE HERE
 	// {yourPrecompile}Key
 )
 
 // ADD YOUR PRECOMPILE HERE
-var precompileKeys = []precompileKey{contractDeployerAllowListKey, contractNativeMinterKey, txAllowListKey, feeManagerKey /* {yourPrecompile}Key */}
+var precompileKeys = []precompileKey{contractDeployerAllowListKey, contractNativeMinterKey, txAllowListKey, feeManagerKey, contractCallMainnet /* {yourPrecompile}Key */}
 
 // PrecompileUpgrade is a helper struct embedded in UpgradeConfig, representing
 // each of the possible stateful precompile types that can be activated
@@ -36,6 +37,7 @@ type PrecompileUpgrade struct {
 	ContractNativeMinterConfig      *precompile.ContractNativeMinterConfig      `json:"contractNativeMinterConfig,omitempty"`      // Config for the native minter precompile
 	TxAllowListConfig               *precompile.TxAllowListConfig               `json:"txAllowListConfig,omitempty"`               // Config for the tx allow list precompile
 	FeeManagerConfig                *precompile.FeeConfigManagerConfig          `json:"feeManagerConfig,omitempty"`                // Config for the fee manager precompile
+	ContractCallMainnetConfig       *precompile.ContractCallMainnetConfig       `json:"contractCallMainnetConfig,omitempty"`       // Config for the call mainnet precompile
 	// ADD YOUR PRECOMPILE HERE
 	// {YourPrecompile}Config  *precompile.{YourPrecompile}Config `json:"{yourPrecompile}Config,omitempty"`
 }
@@ -50,6 +52,8 @@ func (p *PrecompileUpgrade) getByKey(key precompileKey) (precompile.StatefulPrec
 		return p.TxAllowListConfig, p.TxAllowListConfig != nil
 	case feeManagerKey:
 		return p.FeeManagerConfig, p.FeeManagerConfig != nil
+	case contractCallMainnet:
+		return p.ContractCallMainnetConfig, p.ContractCallMainnetConfig != nil
 	// ADD YOUR PRECOMPILE HERE
 	/*
 		case {yourPrecompile}Key:
@@ -207,6 +211,13 @@ func (c *ChainConfig) GetFeeConfigManagerConfig(blockTimestamp *big.Int) *precom
 	return nil
 }
 
+func (c *ChainConfig) GetContractCallMainnetConfig(blockTimestamp *big.Int) *precompile.ContractCallMainnetConfig {
+	if val := c.getActivePrecompileConfig(blockTimestamp, contractCallMainnet, c.PrecompileUpgrades); val != nil {
+		return val.(*precompile.ContractCallMainnetConfig)
+	}
+	return nil
+}
+
 /* ADD YOUR PRECOMPILE HERE
 func (c *ChainConfig) Get{YourPrecompile}Config(blockTimestamp *big.Int) *precompile.{YourPrecompile}Config {
 	if val := c.getActivePrecompileConfig(blockTimestamp, {yourPrecompile}Key, c.PrecompileUpgrades); val != nil {
@@ -229,6 +240,9 @@ func (c *ChainConfig) GetActivePrecompiles(blockTimestamp *big.Int) PrecompileUp
 	}
 	if config := c.GetFeeConfigManagerConfig(blockTimestamp); config != nil && !config.Disable {
 		pu.FeeManagerConfig = config
+	}
+	if config := c.GetContractCallMainnetConfig(blockTimestamp); config != nil && !config.Disable {
+		pu.ContractCallMainnetConfig = config
 	}
 	// ADD YOUR PRECOMPILE HERE
 	// if config := c.{YourPrecompile}Config(blockTimestamp); config != nil && !config.Disable {
