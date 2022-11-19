@@ -1,4 +1,3 @@
-
 # Subnet EVM
 
 [![Build + Test + Release](https://github.com/ava-labs/subnet-evm/actions/workflows/lint-tests-release.yml/badge.svg)](https://github.com/ava-labs/subnet-evm/actions/workflows/lint-tests-release.yml)
@@ -19,20 +18,23 @@ The Subnet EVM runs in a separate process from the main AvalancheGo process and 
 ### AvalancheGo Compatibility
 
 ```text
-[v0.1.0] AvalancheGo@v1.7.0-v1.7.4
-[v0.1.1-v0.1.2] AvalancheGo@v1.7.5-v1.7.6
-[v0.2.0] AvalancheGo@v1.7.7-v1.7.9
-[v0.2.1] AvalancheGo@v1.7.10
-[v0.2.2] AvalancheGo@v1.7.11-v1.7.12
-[v0.2.3] AvalancheGo@v1.7.13-v1.7.16
-[v0.2.4] AvalancheGo@v1.7.13-v1.7.16
-[v0.2.5] AvalancheGo@v1.7.13-v1.7.16
-[v0.2.6] AvalancheGo@v1.7.13-v1.7.16
-[v0.2.7] AvalancheGo@v1.7.13-v1.7.16
-[v0.2.8] AvalancheGo@v1.7.13-v1.7.18
-[v0.2.9] AvalancheGo@v1.7.13-v1.7.18
-[v0.3.0] AvalancheGo@v1.8.0-v1.8.6
-[v0.4.0] AvalancheGo@v1.9.0
+[v0.1.0] AvalancheGo@v1.7.0-v1.7.4 (Protocol Version: 9)
+[v0.1.1-v0.1.2] AvalancheGo@v1.7.5-v1.7.6 (Protocol Version: 10)
+[v0.2.0] AvalancheGo@v1.7.7-v1.7.9 (Protocol Version: 11)
+[v0.2.1] AvalancheGo@v1.7.10 (Protocol Version: 12)
+[v0.2.2] AvalancheGo@v1.7.11-v1.7.12 (Protocol Version: 14)
+[v0.2.3] AvalancheGo@v1.7.13-v1.7.16 (Protocol Version: 15)
+[v0.2.4] AvalancheGo@v1.7.13-v1.7.16 (Protocol Version: 15)
+[v0.2.5] AvalancheGo@v1.7.13-v1.7.16 (Protocol Version: 15)
+[v0.2.6] AvalancheGo@v1.7.13-v1.7.16 (Protocol Version: 15)
+[v0.2.7] AvalancheGo@v1.7.13-v1.7.16 (Protocol Version: 15)
+[v0.2.8] AvalancheGo@v1.7.13-v1.7.18 (Protocol Version: 15)
+[v0.2.9] AvalancheGo@v1.7.13-v1.7.18 (Protocol Version: 15)
+[v0.3.0] AvalancheGo@v1.8.0-v1.8.6 (Protocol Version: 16)
+[v0.4.0] AvalancheGo@v1.9.0 (Protocol Version: 17)
+[v0.4.1] AvalancheGo@v1.9.1 (Protocol Version: 18)
+[v0.4.2] AvalancheGo@v1.9.1 (Protocol Version: 18)
+[v0.4.3] AvalancheGo@v1.9.2 (Protocol Version: 19)
 ```
 
 ## API
@@ -95,7 +97,7 @@ This will clone and checkout to `master` branch.
 and creates a `subnet-evm` genesis file. The usage of this script is
 
 ```bash
-./scripts/run.sh [AVALANCHEGO VERSION] [GENESIS_ADDRESS]
+DEFAULT_ACCOUNT=[GENESIS_ADDRESS] ./scripts/run.sh [AVALANCHEGO VERSION]
 ```
 
 ```bash
@@ -103,8 +105,11 @@ and creates a `subnet-evm` genesis file. The usage of this script is
 cd ${HOME}/go/src/github.com/ava-labs/subnet-evm
 git pull
 
-# TODO: update the "avalanchego" version to latest
-SKIP_NETWORK_RUNNER_SHUTDOWN=true ./scripts/run.sh 1.7.17 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC
+# to use the latest version "scripts/versions.sh"
+./scripts/run.sh
+
+# to specify the version and default account for genesis
+DEFAULT_ACCOUNT=0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC ./scripts/run.sh 1.9.2
 ```
 
 Note: make sure you check the version compatibility above between AvalancheGo and Subnet-evm and use the proper version of AvalancheGo.
@@ -224,7 +229,7 @@ Once your config is specified, you can run the tool by either invoking `go run m
 
 To make getting started easier, the ewoq key `0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC`
 has been pre-added to the simulator key directory and can be added to genesis during local network
-creation (`./scripts/run.sh [AVALANCHEGO VERSION] 0x8db97C7cEcE249c2b98bDC0226Cc4C2A57BF52FC`).
+creation (`DEFAULT_ACCOUNT=[GENESIS_ADDRESS] ./scripts/run.sh [AVALANCHEGO VERSION]`).
 If you do not add this key to genesis, you'll need to manually fund the
 `master` account when prompted in the terminal.
 
