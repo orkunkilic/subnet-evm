@@ -137,6 +137,9 @@ echo "creating genesis"
       "maxBlockGasCost": 10000000,
       "targetBlockRate": 2,
       "blockGasCostStep": 500000
+    },
+    "ED25519": {
+      "blockTimestamp": 0
     }
   },
   "alloc": {
