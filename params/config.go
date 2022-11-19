@@ -254,12 +254,10 @@ func (c *ChainConfig) IsFeeConfigManager(blockTimestamp *big.Int) bool {
 }
 
 // ADD YOUR PRECOMPILE HERE
-/*
-func (c *ChainConfig) Is{YourPrecompile}(blockTimestamp *big.Int) bool {
-	config := c.Get{YourPrecompile}Config(blockTimestamp)
+func (c *ChainConfig) IsED25519(blockTimestamp *big.Int) bool {
+	config := c.GetED25519Config(blockTimestamp)
 	return config != nil && !config.Disable
 }
-*/
 
 // CheckCompatible checks whether scheduled fork transitions have been imported
 // with a mismatching chain configuration.
@@ -494,7 +492,7 @@ type Rules struct {
 	IsTxAllowListEnabled               bool
 	IsFeeConfigManagerEnabled          bool
 	// ADD YOUR PRECOMPILE HERE
-	// Is{YourPrecompile}Enabled         bool
+	IsED25519Enabled bool
 
 	// Precompiles maps addresses to stateful precompiled contracts that are enabled
 	// for this rule set.
@@ -533,7 +531,7 @@ func (c *ChainConfig) AvalancheRules(blockNum, blockTimestamp *big.Int) Rules {
 	rules.IsTxAllowListEnabled = c.IsTxAllowList(blockTimestamp)
 	rules.IsFeeConfigManagerEnabled = c.IsFeeConfigManager(blockTimestamp)
 	// ADD YOUR PRECOMPILE HERE
-	// rules.Is{YourPrecompile}Enabled = c.{IsYourPrecompile}(blockTimestamp)
+	rules.IsED25519Enabled = c.IsED25519(blockTimestamp)
 
 	// Initialize the stateful precompiles that should be enabled at [blockTimestamp].
 	rules.Precompiles = make(map[common.Address]precompile.StatefulPrecompiledContract)

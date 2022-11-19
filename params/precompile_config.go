@@ -22,11 +22,11 @@ const (
 	txAllowListKey
 	feeManagerKey
 	// ADD YOUR PRECOMPILE HERE
-	// {yourPrecompile}Key
+	ED25519Key
 )
 
 // ADD YOUR PRECOMPILE HERE
-var precompileKeys = []precompileKey{contractDeployerAllowListKey, contractNativeMinterKey, txAllowListKey, feeManagerKey /* {yourPrecompile}Key */}
+var precompileKeys = []precompileKey{contractDeployerAllowListKey, contractNativeMinterKey, txAllowListKey, feeManagerKey, ED25519Key}
 
 // PrecompileUpgrade is a helper struct embedded in UpgradeConfig, representing
 // each of the possible stateful precompile types that can be activated
@@ -37,7 +37,7 @@ type PrecompileUpgrade struct {
 	TxAllowListConfig               *precompile.TxAllowListConfig               `json:"txAllowListConfig,omitempty"`               // Config for the tx allow list precompile
 	FeeManagerConfig                *precompile.FeeConfigManagerConfig          `json:"feeManagerConfig,omitempty"`                // Config for the fee manager precompile
 	// ADD YOUR PRECOMPILE HERE
-	// {YourPrecompile}Config  *precompile.{YourPrecompile}Config `json:"{yourPrecompile}Config,omitempty"`
+	ED25519Config *precompile.ED25519Config `json:"ED25519Config,omitempty"`
 }
 
 func (p *PrecompileUpgrade) getByKey(key precompileKey) (precompile.StatefulPrecompileConfig, bool) {
@@ -50,11 +50,9 @@ func (p *PrecompileUpgrade) getByKey(key precompileKey) (precompile.StatefulPrec
 		return p.TxAllowListConfig, p.TxAllowListConfig != nil
 	case feeManagerKey:
 		return p.FeeManagerConfig, p.FeeManagerConfig != nil
-	// ADD YOUR PRECOMPILE HERE
-	/*
-		case {yourPrecompile}Key:
-		return p.{YourPrecompile}Config , p.{YourPrecompile}Config  != nil
-	*/
+		// ADD YOUR PRECOMPILE HERE
+	case ED25519Key:
+		return p.ED25519Config, p.ED25519Config != nil
 	default:
 		panic(fmt.Sprintf("unknown upgrade key: %v", key))
 	}
@@ -207,14 +205,13 @@ func (c *ChainConfig) GetFeeConfigManagerConfig(blockTimestamp *big.Int) *precom
 	return nil
 }
 
-/* ADD YOUR PRECOMPILE HERE
-func (c *ChainConfig) Get{YourPrecompile}Config(blockTimestamp *big.Int) *precompile.{YourPrecompile}Config {
-	if val := c.getActivePrecompileConfig(blockTimestamp, {yourPrecompile}Key, c.PrecompileUpgrades); val != nil {
-		return val.(*precompile.{YourPrecompile}Config)
+// ADD YOUR PRECOMPILE HERE
+func (c *ChainConfig) GetED25519Config(blockTimestamp *big.Int) *precompile.ED25519Config {
+	if val := c.getActivePrecompileConfig(blockTimestamp, ED25519Key, c.PrecompileUpgrades); val != nil {
+		return val.(*precompile.ED25519Config)
 	}
 	return nil
 }
-*/
 
 func (c *ChainConfig) GetActivePrecompiles(blockTimestamp *big.Int) PrecompileUpgrade {
 	pu := PrecompileUpgrade{}
@@ -231,8 +228,9 @@ func (c *ChainConfig) GetActivePrecompiles(blockTimestamp *big.Int) PrecompileUp
 		pu.FeeManagerConfig = config
 	}
 	// ADD YOUR PRECOMPILE HERE
-	// if config := c.{YourPrecompile}Config(blockTimestamp); config != nil && !config.Disable {
-	// 	pu.{YourPrecompile}Config = config
+	// FIXME: This errors as ED25519Config is not a function
+	// if config := c.ED25519Config(blockTimestamp); config != nil && !config.Disable {
+	// 	pu.ED25519Config = config
 	// }
 
 	return pu

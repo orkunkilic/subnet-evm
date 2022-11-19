@@ -32,7 +32,7 @@ var (
 	TxAllowListAddress               = common.HexToAddress("0x0200000000000000000000000000000000000002")
 	FeeConfigManagerAddress          = common.HexToAddress("0x0200000000000000000000000000000000000003")
 	// ADD YOUR PRECOMPILE HERE
-	// {YourPrecompile}Address       = common.HexToAddress("0x03000000000000000000000000000000000000??")
+	ED25519Address = common.HexToAddress("0x0300000000000000000000000000000000000001")
 
 	UsedAddresses = []common.Address{
 		ContractDeployerAllowListAddress,
@@ -40,7 +40,7 @@ var (
 		TxAllowListAddress,
 		FeeConfigManagerAddress,
 		// ADD YOUR PRECOMPILE HERE
-		// YourPrecompileAddress
+		ED25519Address,
 	}
 	reservedRanges = []AddressRange{
 		{
