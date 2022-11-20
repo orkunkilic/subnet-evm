@@ -249,10 +249,9 @@ func (c *ChainConfig) GetActivePrecompiles(blockTimestamp *big.Int) PrecompileUp
 		pu.FeeManagerConfig = config
 	}
 	// ADD YOUR PRECOMPILE HERE
-	// FIXME: This errors as ED25519Config is not a function
-	// if config := c.ED25519Config(blockTimestamp); config != nil && !config.Disable {
-	// 	pu.ED25519Config = config
-	// }
+	if config := c.GetED25519Config(blockTimestamp); config != nil && !config.Disable {
+		pu.ED25519Config = config
+	}
 
 	return pu
 }

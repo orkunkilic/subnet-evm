@@ -2,6 +2,7 @@ package precompile
 
 import (
 	"crypto/ed25519"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"math/big"
@@ -14,10 +15,10 @@ import (
 )
 
 const (
-	VerifyGasCost uint64 = 20_000
+	VerifyGasCost uint64 = 40_000
 
 	// ED25519RawABI contains the raw ABI of ED25519 contract.
-	ED25519RawABI = "[{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"signature\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"message\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"publicKey\",\"type\":\"bytes32\"}],\"name\":\"verify\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
+	ED25519RawABI = "[{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"signature\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"message\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"publicKey\",\"type\":\"bytes32\"}],\"name\":\"verify\",\"outputs\":[{\"internalType\": \"bool\",\"name\": \"\",\"type\": \"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]"
 )
 
 // CUSTOM CODE STARTS HERE
@@ -99,6 +100,12 @@ func (c *ED25519Config) Configure(_ ChainConfig, state StateDB, _ BlockContext) 
 	// CUSTOM CODE STARTS HERE
 }
 
+// String returns a string representation of the ED25519Config.
+func (c *ED25519Config) String() string {
+	bytes, _ := json.Marshal(c)
+	return string(bytes)
+}
+
 // Contract returns the singleton stateful precompiled contract to be used for ED25519.
 func (c *ED25519Config) Contract() StatefulPrecompiledContract {
 	return ED25519Precompile
@@ -129,8 +136,8 @@ func UnpackVerifyInput(input []byte) (*[]byte, *[]byte, *[]byte, error) {
 // PackSetProtection packs [protection] of type *big.Int into the appropriate arguments for setProtection.
 // the packed bytes include selector (first 4 func signature bytes).
 // This function is mostly used for tests.
-func PackVerify(signature []byte, publicKey []byte) ([]byte, error) {
-	return ED25519ABI.Pack("verify", signature, publicKey)
+func PackVerify(signature []byte, message []byte, publicKey []byte) ([]byte, error) {
+	return ED25519ABI.Pack("verify", signature, message, publicKey)
 }
 
 func verify(accessibleState PrecompileAccessibleState, caller common.Address, addr common.Address, input []byte, suppliedGas uint64, readOnly bool) (ret []byte, remainingGas uint64, err error) {
@@ -153,13 +160,12 @@ func verify(accessibleState PrecompileAccessibleState, caller common.Address, ad
 
 	// verify signature
 	if !ed25519.Verify(pubKey, *message, *signature) {
-		return nil, remainingGas, vmerrs.ErrInvalidSignature
+		// return false
+		return []byte{0}, remainingGas, nil
 	}
 
-	// Return nothing
-	packedOutput := []byte{}
-	// Return the packed output and the remaining gas
-	return packedOutput, remainingGas, nil
+	// Return true if signature is valid
+	return []byte{1}, remainingGas, nil
 }
 
 // createED25519Precompile returns a StatefulPrecompiledContract with getters and setters for the precompile.
@@ -167,11 +173,11 @@ func verify(accessibleState PrecompileAccessibleState, caller common.Address, ad
 func createED25519Precompile(precompileAddr common.Address) StatefulPrecompiledContract {
 	var functions []*statefulPrecompileFunction
 
-	methodSetProtection, ok := ED25519ABI.Methods["verify"]
+	methodVerify, ok := ED25519ABI.Methods["verify"]
 	if !ok {
 		panic("given method does not exist in the ABI")
 	}
-	functions = append(functions, newStatefulPrecompileFunction(methodSetProtection.ID, verify))
+	functions = append(functions, newStatefulPrecompileFunction(methodVerify.ID, verify))
 
 	// Construct the contract with no fallback function.
 	contract := newStatefulPrecompileWithFunctionSelectors(nil, functions)
